@@ -7,14 +7,19 @@ class MoviesController < ApplicationController
   end
 
   def index
-    #part 1 sort
-    #@movies = Movie.all
     @all_ratings = Movie.all_ratings
     @rating_to_show = []
 
+    if params[:sort].nil? && !session[:sort].nil?
+      params[:sort] = session[:sort]
+    end
+    if params[:ratings].nil? && !session[:ratings].nil?
+      params[:ratings] = session[:ratings]
+    end
+
     # empty/nil condition
     if params[:ratings].nil? || params[:ratings].empty?
-      @ratings_to_show = []
+      @ratings_to_show = @all_ratings
     else
       @ratings_to_show = params[:ratings].keys
       params[:ratings] = Hash[@ratings_to_show.collect { |item| [item, '1'] } ]
@@ -22,8 +27,7 @@ class MoviesController < ApplicationController
    
     session[:ratings] = params[:ratings] 
     @movies = Movie.with_ratings(@ratings_to_show)
-
-    # part 2 filter
+    
     if params[:sort] == "title"
       @titleCSS = "hilite"
       @release_dateCSS = ""
@@ -43,6 +47,7 @@ class MoviesController < ApplicationController
 
   def new
     # default: render 'new' template
+
   end
 
   def create
