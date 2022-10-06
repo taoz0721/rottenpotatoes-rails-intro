@@ -23,6 +23,22 @@ class MoviesController < ApplicationController
     session[:ratings] = params[:ratings] 
     @movies = Movie.with_ratings(@ratings_to_show)
 
+    # part 2 filter
+    if params[:sort] == "title"
+      @titleCSS = "hilite"
+      @release_dateCSS = ""
+      @movies = Movie.with_ratings(@ratings_to_show).order("title")
+      session[:sort] = "title"
+    elsif params[:sort] == "release"
+      @titleCSS = ""
+      @release_dateCSS = "hilite"
+      @movies = Movie.with_ratings(@ratings_to_show).order("release_date")
+      session[:sort] = "release"
+    else
+      @movies = Movie.with_ratings(@ratings_to_show) #unsorted
+      session[:sort] = nil
+    end
+
   end
 
   def new
